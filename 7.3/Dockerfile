@@ -1,5 +1,7 @@
 FROM php:7.3-alpine
 
+RUN apk update && apk add imap-dev krb5-dev
+
 # Install dev dependencies
 RUN apk add --no-cache --virtual .build-deps \
     $PHPIZE_DEPS \
@@ -55,6 +57,9 @@ RUN docker-php-ext-install \
     gd \
     zip \
     bcmath
+
+RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
+    && docker-php-ext-install imap
 
 # Install composer
 ENV COMPOSER_HOME /composer
